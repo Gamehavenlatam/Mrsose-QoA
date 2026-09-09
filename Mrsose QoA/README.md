@@ -48,9 +48,14 @@ No requiere configuración — todos los arreglos se aplican automáticamente al
 
 ---
 
+### 5. Error de Lua al abrir una profesión: `attempt to index global 'TradeSkillFrame' (a nil value)`
+**Problema:** con TSM Crafting activo, la ventana nativa de profesión de Blizzard (`TradeSkillFrame`) nunca llega a crearse. Otros addons que asumen que esa ventana siempre existe —como el skin que `ElvUI_AddOnSkins` le aplica a AckisRecipeList— tiran un error de Lua al intentar leerla (`ackisRecipeList.lua`, línea 73-74) cada vez que abres una profesión.
+
+**Arreglo:** ya que no se puede tocar el código de AckisRecipeList/ElvUI_AddOnSkins (no son parte de TSM), se crea un `TradeSkillFrame` vacío e inofensivo apenas entras al mundo si no existe uno real. Esto no restaura el skin de AckisRecipeList sobre esa ventana (no hay ventana real que skinear), pero evita el error.
+
 ## Limitaciones conocidas
 
-Existe un quinto bug menor (una condición de carrera donde el `itemLevel` de un ítem a veces tarda en cargar justo en el momento del escaneo, causando que TSM lo marque como "no destruible" para siempre en esa sesión) que **no se puede arreglar desde un addon externo**, porque vive dentro de una función completamente privada de TSM inalcanzable desde afuera. Es poco frecuente; si notas que un ítem específico no se detecta como destruible pese a cumplir los requisitos, un `/reload` normalmente lo soluciona.
+Existe un bug menor (una condición de carrera donde el `itemLevel` de un ítem a veces tarda en cargar justo en el momento del escaneo, causando que TSM lo marque como "no destruible" para siempre en esa sesión) que **no se puede arreglar desde un addon externo**, porque vive dentro de una función completamente privada de TSM inalcanzable desde afuera. Es poco frecuente; si notas que un ítem específico no se detecta como destruible pese a cumplir los requisitos, un `/reload` normalmente lo soluciona.
 
 ## Soporte
 

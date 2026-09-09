@@ -152,6 +152,27 @@ end
 
 
 -- ============================================================================
+-- Fix 5: with TSM Crafting handling profession windows, the native Blizzard
+-- TradeSkillFrame may never get created. Other addons that assume it always
+-- exists (e.g. AckisRecipeList's ElvUI_AddOnSkins skin module) then error
+-- with "attempt to index global 'TradeSkillFrame' (a nil value)" when a
+-- profession is opened. We can't patch those addons directly (not part of
+-- TSM), so just make sure a harmless placeholder frame exists under that
+-- name so indexing it doesn't throw - it won't restore their skinning, but
+-- it stops the error.
+-- ============================================================================
+local function ApplyTradeSkillFrameGuard()
+	if patched.tradeSkillFrameGuard or _G.TradeSkillFrame then
+		return
+	end
+	_G.TradeSkillFrame = CreateFrame("Frame", "TradeSkillFrame", UIParent)
+	_G.TradeSkillFrame:Hide()
+	patched.tradeSkillFrameGuard = true
+end
+
+
+
+-- ============================================================================
 -- Event handling
 -- ============================================================================
 frame:SetScript("OnEvent", function(self, event, addonName)
@@ -162,10 +183,12 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 			ApplyMailingFix()
 		end
 		ApplyChatThrottleFix()
+		ApplyTradeSkillFrameGuard()
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		ApplyItemClassFix()
 		ApplyChatThrottleFix()
 		ApplyMailingFix()
+		ApplyTradeSkillFrameGuard()
 		-- give item/profession data time to load before rescanning bags
 		After(5, ApplyBagRescanFix)
 	end
