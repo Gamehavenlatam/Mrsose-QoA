@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: |cff00fe00Mrsose QoA|r
+## Notes: Community fixes for TradeSkillMaster (3.3.5a backport) that survive TSM updates.
+## Author: Mrsose
+## Version: 1.0.0
+## OptionalDeps: TradeSkillMaster, TradeSkillMaster_Mailing
+
+Mrsose QoA.lua
