@@ -165,8 +165,14 @@ local function ApplyTradeSkillFrameGuard()
 	if patched.tradeSkillFrameGuard or _G.TradeSkillFrame then
 		return
 	end
-	_G.TradeSkillFrame = CreateFrame("Frame", "TradeSkillFrame", UIParent)
-	_G.TradeSkillFrame:Hide()
+	local dummy = CreateFrame("Frame", "TradeSkillFrame", UIParent)
+	-- Never let this placeholder actually become visible - some game/addon code
+	-- may try to ShowUIPanel()/:Show() whatever is named "TradeSkillFrame" when a
+	-- profession is opened, which would otherwise pop up an empty gray box now
+	-- that the global isn't nil anymore.
+	dummy:Hide()
+	dummy.Show = function() end
+	_G.TradeSkillFrame = dummy
 	patched.tradeSkillFrameGuard = true
 end
 
